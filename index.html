@@ -16,8 +16,8 @@
   <script>
     // Create the globe instance
     const world = new Globe(document.getElementById('globeViz'), { animateIn: false })
-      .globeImageUrl('')  // Set empty background for transparency
-      .bumpImageUrl('');  // No bump image (remove texture effect)
+      .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg')  // Use the earth texture
+      .bumpImageUrl('https://unpkg.com/three-globe/example/img/earth-topology.png');  // Optional bump texture
 
     // Auto-rotate the globe
     world.controls().autoRotate = true;
