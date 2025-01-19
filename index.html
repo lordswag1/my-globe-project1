@@ -5,8 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>3D Globe with Markers</title>
   <style>
-    body { margin: 0; }
-    #globeViz { width: 100%; height: 100vh; }
+    body {
+      margin: 0;
+      background-color: transparent; /* Ensures the background is transparent */
+    }
+    #globeViz {
+      width: 100%;
+      height: 100vh;
+      background-color: transparent; /* Ensures globe container has no background */
+    }
   </style>
   <script src="https://unpkg.com/globe.gl"></script>
 </head>
@@ -16,14 +23,14 @@
   <script>
     // Create the globe instance
     const world = new Globe(document.getElementById('globeViz'), { animateIn: false })
-      .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg')  // Use the earth texture
+      .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg')  // Earth texture
       .bumpImageUrl('https://unpkg.com/three-globe/example/img/earth-topology.png');  // Optional bump texture
 
     // Auto-rotate the globe
     world.controls().autoRotate = true;
     world.controls().autoRotateSpeed = 0.35;
 
-    // Coordinates for markers (lat, lng)
+    // Coordinates for the markers (lat, lng)
     const locations = [
       { name: 'Thailand', lat: 15.87, lng: 100.99 },
       { name: 'Italy', lat: 41.87, lng: 12.56 },
@@ -34,18 +41,18 @@
       { name: 'Malaysia', lat: 4.21, lng: 101.97 }
     ];
 
-    // Add markers for each country to the globe
+    // Add markers for each country on the globe
     world.objectsData(locations)
       .objectLat('lat')
       .objectLng('lng')
       .objectLabel('name')
-      .objectRadius(0.1) // Adjust the size of the markers (0.1 is just an example)
-      .objectColor('red'); // Set the marker color
+      .objectRadius(0.1)  // Adjust size of the markers
+      .objectColor('red');  // Set marker color
 
-    // Add a basic ambient light
+    // Add ambient light
     world.scene().add(new THREE.AmbientLight(0x404040, 1));  // Soft white light
 
-    // Add clouds sphere (optional)
+    // Optional: Add rotating clouds (if you want to keep clouds)
     const CLOUDS_IMG_URL = 'https://unpkg.com/three-globe/example/img/clouds.png';
     const CLOUDS_ALT = 0.004;
     const CLOUDS_ROTATION_SPEED = -0.006;
@@ -57,6 +64,7 @@
       );
       world.scene().add(clouds);
 
+      // Rotate the clouds
       (function rotateClouds() {
         clouds.rotation.y += CLOUDS_ROTATION_SPEED * Math.PI / 180;
         requestAnimationFrame(rotateClouds);
