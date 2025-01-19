@@ -23,7 +23,10 @@
 
   <script>
     // Create the globe instance
-    const world = new Globe(document.getElementById('globeViz'), { animateIn: false })
+    const world = new Globe(document.getElementById('globeViz'), { 
+      animateIn: false,
+      backgroundColor: "rgba(0,0,0,0)"  // Set the background color to transparent
+    })
       .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg')  // Earth texture
       .bumpImageUrl('https://unpkg.com/three-globe/example/img/earth-topology.png');  // Optional bump texture
 
