@@ -8,7 +8,7 @@
     body {
       margin: 0;
       overflow: hidden; /* Ensures no scrollbars */
-      background-color: #F3F2EC; /* Set background color to light beige */
+      background-color: transparent; /* No background color */
     }
     #globeViz {
       width: 100%;
@@ -25,13 +25,13 @@
     // Create the globe instance
     const world = new Globe(document.getElementById('globeViz'), { 
       animateIn: false,
-      backgroundColor: "rgba(243, 242, 236, 1)"  // Set background color to #F3F2EC
+      backgroundColor: "rgba(0,0,0,0)"  // Set background color to transparent
     })
       .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg')  // Earth texture
       .bumpImageUrl('https://unpkg.com/three-globe/example/img/earth-topology.png');  // Optional bump texture
 
-    // Set the background of the WebGL scene to the same color
-    world.scene().background = new THREE.Color("#F3F2EC");  // Background color #F3F2EC
+    // Set the background of the WebGL scene to transparent
+    world.scene().background = new THREE.Color(0x000000);  // Transparent background
 
     // Auto-rotate the globe
     world.controls().autoRotate = true;
