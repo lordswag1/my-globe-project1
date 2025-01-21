@@ -8,7 +8,7 @@
     body {
       margin: 0;
       overflow: hidden; /* Ensures no scrollbars */
-      background-color: rgb(243, 242, 236); /* Light beige background color */
+      background-color: rgba(0, 0, 0, 0); /* Transparent background */
     }
     #globeViz {
       width: 100%;
@@ -16,6 +16,7 @@
       background-color: transparent; /* Globe container is transparent */
     }
   </style>
+  <script src="https://unpkg.com/three"></script>
   <script src="https://unpkg.com/globe.gl"></script>
 </head>
 <body>
@@ -23,19 +24,20 @@
 
   <script>
     // Create the globe instance
-    const world = new Globe(document.getElementById('globeViz'), { 
-      animateIn: false,
-      backgroundColor: "rgba(0,0,0,0)"  // Transparent background for WebGL scene
-    })
-      .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg')  // Earth texture
-      .bumpImageUrl('https://unpkg.com/three-globe/example/img/earth-topology.png');  // Optional bump texture
+    const world = Globe()
+      .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg') // Earth texture
+      .bumpImageUrl('https://unpkg.com/three-globe/example/img/earth-topology.png');    // Optional bump texture
 
-    // Set the background of the WebGL scene to transparent
-    world.scene().background = new THREE.Color(0x000000);  // Transparent background
+    // Render the globe in the container
+    const container = document.getElementById('globeViz');
+    const globeInstance = world(container);
+
+    // Set the WebGL scene background to transparent
+    globeInstance.renderer().setClearColor(0x000000, 0); // Fully transparent background
 
     // Auto-rotate the globe
-    world.controls().autoRotate = true;
-    world.controls().autoRotateSpeed = 0.35;
+    globeInstance.controls().autoRotate = true;
+    globeInstance.controls().autoRotateSpeed = 0.35;
 
     // Coordinates for the markers (lat, lng)
     const locations = [
@@ -49,15 +51,16 @@
     ];
 
     // Add markers for each country on the globe
-    world.objectsData(locations)
-      .objectLat('lat')
-      .objectLng('lng')
-      .objectLabel('name')
-      .objectRadius(0.1)  // Adjust size of the markers
-      .objectColor('red');  // Set marker color
+    globeInstance
+      .pointsData(locations)
+      .pointLat('lat')
+      .pointLng('lng')
+      .pointLabel('name')
+      .pointAltitude(0.05) // Adjust size of the markers
+      .pointColor(() => 'red'); // Set marker color
 
     // Add ambient light
-    world.scene().add(new THREE.AmbientLight(0x404040, 1));  // Soft white light
+    globeInstance.scene().add(new THREE.AmbientLight(0x404040, 1)); // Soft white light
 
     // Optional: Add rotating clouds (if you want to keep clouds)
     const CLOUDS_IMG_URL = 'https://unpkg.com/three-globe/example/img/clouds.png';
@@ -66,10 +69,10 @@
 
     new THREE.TextureLoader().load(CLOUDS_IMG_URL, cloudsTexture => {
       const clouds = new THREE.Mesh(
-        new THREE.SphereGeometry(world.getGlobeRadius() * (1 + CLOUDS_ALT), 75, 75),
+        new THREE.SphereGeometry(globeInstance.getGlobeRadius() * (1 + CLOUDS_ALT), 75, 75),
         new THREE.MeshPhongMaterial({ map: cloudsTexture, transparent: true })
       );
-      world.scene().add(clouds);
+      globeInstance.scene().add(clouds);
 
       // Rotate the clouds
       (function rotateClouds() {
