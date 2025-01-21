@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>3D Globe with Markers</title>
+  <title>Rotating Globe</title>
   <style>
     body {
       margin: 0;
       overflow: hidden; /* Prevent scrollbars */
-      background-color: #F3F2EC; /* Set the background to match your desired color */
+      background-color: #F3F2EC; /* Light beige background */
     }
     #globeViz {
       width: 100%;
@@ -22,23 +22,18 @@
   <div id="globeViz"></div>
 
   <script>
-    // Initialize the globe
-    const world = Globe()
-      .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg') // Earth texture
-      .bumpImageUrl('https://unpkg.com/three-globe/example/img/earth-topology.png');    // Bump texture for elevation
+    // Create the globe instance
+    const globeContainer = document.getElementById('globeViz');
+    const globe = Globe()(globeContainer)
+      .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
+      .bumpImageUrl('https://unpkg.com/three-globe/example/img/earth-topology.png')
+      .backgroundColor('#F3F2EC'); // Set background color matching your preference
 
-    // Render the globe in the container
-    const container = document.getElementById('globeViz');
-    const globeInstance = world(container);
+    // Auto-rotate the globe
+    globe.controls().autoRotate = true;
+    globe.controls().autoRotateSpeed = 0.35;
 
-    // Set transparent WebGL scene background
-    globeInstance.renderer().setClearColor(0x000000, 0); // Fully transparent background for WebGL
-
-    // Auto-rotate settings
-    globeInstance.controls().autoRotate = true;
-    globeInstance.controls().autoRotateSpeed = 0.35;
-
-    // Define marker locations
+    // Add markers for visited countries
     const locations = [
       { name: 'Thailand', lat: 15.87, lng: 100.99 },
       { name: 'Italy', lat: 41.87, lng: 12.56 },
@@ -49,36 +44,17 @@
       { name: 'Malaysia', lat: 4.21, lng: 101.97 }
     ];
 
-    // Add markers for visited countries
-    globeInstance
+    globe
       .pointsData(locations)
       .pointLat('lat')
       .pointLng('lng')
-      .pointLabel('name')
-      .pointAltitude(0.03) // Adjust marker height
-      .pointColor(() => 'red'); // Red marker color
+      .pointColor(() => 'red')
+      .pointAltitude(0.02)
+      .pointLabel('name');
 
-    // Add ambient lighting
-    globeInstance.scene().add(new THREE.AmbientLight(0x404040, 1)); // Soft white light
-
-    // Optional: Add rotating clouds
-    const CLOUDS_IMG_URL = 'https://unpkg.com/three-globe/example/img/clouds.png';
-    const CLOUDS_ALT = 0.004;
-    const CLOUDS_ROTATION_SPEED = -0.006;
-
-    new THREE.TextureLoader().load(CLOUDS_IMG_URL, cloudsTexture => {
-      const clouds = new THREE.Mesh(
-        new THREE.SphereGeometry(globeInstance.getGlobeRadius() * (1 + CLOUDS_ALT), 75, 75),
-        new THREE.MeshPhongMaterial({ map: cloudsTexture, transparent: true })
-      );
-      globeInstance.scene().add(clouds);
-
-      // Rotate the clouds
-      (function rotateClouds() {
-        clouds.rotation.y += CLOUDS_ROTATION_SPEED * Math.PI / 180;
-        requestAnimationFrame(rotateClouds);
-      })();
-    });
+    // Add lighting for a more realistic appearance
+    const ambientLight = new THREE.AmbientLight(0x404040, 1);
+    globe.scene().add(ambientLight);
   </script>
 </body>
 </html>
